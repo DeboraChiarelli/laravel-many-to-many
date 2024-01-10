@@ -36,6 +36,18 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="technologies">Tecnologie:</label>
+                        <!-- Creo un elemento <select> che rappresenta il campo di selezione. L'attributo name="technologies[]" indica un array di valori (le tecnologie selezionate). L'attributo id="technologies" fornisce un identificatore univoco. multiple: permette la selezione multipla, essendo un campo many-to-many. -->
+                        <select name="technologies[]" id="technologies" class="form-control" multiple>
+                            <!-- Itero attraverso tutte le tecnologie disponibili, rappresentate dalla variabile $technologies.
+                                <option value="{{ $technology->id }}">{{ $technology->name }}</option> indica che, per ogni tecnologia, viene generato un elemento <option> con un valore uguale all'id della tecnologia e il testo dell'opzione corrisponde al nome della tecnologia. -->
+                            @foreach($technologies as $technology)
+                                <option value="{{ $technology->id }}">{{ $technology->name }}</option> <!-- Con value="{{ $technology->id }}" specificoil valore che sarà inviato al server quando l'opzione è selezionata. In questo caso, è l'id della tecnologia. {{ $technology->name }}: mostra il nome della tecnologia all'interno dell'opzione. -->
+                            @endforeach
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Aggiorna progetto</button>
                 </form>
                 <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary mt-2">Torna alla lista</a>

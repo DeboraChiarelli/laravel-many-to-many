@@ -35,6 +35,19 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="technologies">Tecnologie:</label>
+                        <select name="technologies[]" id="technologies" class="form-control" multiple> <!-- creo un elemento <select> con l'attributo multiple, il che significa che l'utente può selezionare più di un'opzione -->
+                            @foreach($technologies as $technology) <!-- Itero attraverso tutte le tecnologie disponibili, rappresentate dalla variabile $technologies. -->
+                            <!-- Per ogni tecnologia, viene generato un elemento <option> con un valore uguale all'id della tecnologia e il testo dell'opzione corrisponde al nome della tecnologia -->
+                                <!-- Suiccessivamente controllo se l'id della tecnologia è presente nell'array delle tecnologie selezionate. Se sì, l'opzione sarà selezionata; altrimenti, non sarà selezionata. L'uso di old('technologies', $project->technologies->pluck('id')->toArray()) è necessario per mantenere le selezioni durante la modifica di un progetto. old('technologies') restituirà i valori precedentemente selezionati, mentre $project->technologies->pluck('id')->toArray() fornirà le tecnologie già associate a quel progetto. -->
+                                <option value="{{ $technology->id }}" {{ in_array($technology->id, old('technologies', $project->technologies->pluck('id')->toArray())) ? 'selected' : '' }}>
+                                    {{ $technology->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Crea progetto</button>
                 </form>
                 <a href="{{ route('admin.projects.index') }}" class="btn btn-secondary mt-2">Torna alla lista</a>
