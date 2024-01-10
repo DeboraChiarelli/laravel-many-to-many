@@ -15,4 +15,9 @@ class Project extends Model
     {
         return $this->belongsTo(Type::class);
     }
+    // Aggiungo la funzione con cui il modello Project sarà adesso in grado di recuperare le tecnologie associate a un progetto 
+    public function technologies()
+    {
+        return $this->belongsToMany(Technology::class);
+    }
 }
