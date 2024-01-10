@@ -41,9 +41,15 @@ class ProjectController extends Controller
             'image_path' => 'required|string',
             'description' => 'required|string',
             'type_id' => 'nullable|exists:types,id', // Garantisceche type_id sia valido, se presente
+            'technologies' => 'nullable|array', // Valida che technologies sia un array
+            'technologies.*' => 'exists:technologies,id', // Valida che ciascun elemento nell'array esista come tecnologia
         ]);
-    
-        Project::create($request->all());
+        // La funzione create accetta un array associativo di attributi del modello e crea una nuova riga nel database con quegli attributi. In questo caso, il metodo onlyserve ad estrarre solo gli attributi specificati dalla richiesta HTTP. L'array ['title', 'image_path', 'description', 'type_id'] contiene i campi del modello Project da assegnare al nuovo progetto.
+        $project = Project::create($request->only(['title', 'image_path', 'description', 'type_id']));
+        // Verifico se l'utente ha selezionato delle nuove tecnologie per il progetto
+        if ($request->has('technologies')) {
+            $project->technologies()->attach($request->input('technologies')); // Con questo metodo aggiungo nuove associazioni tra il progetto e le tecnologie specificate nell'array fornito in input ($request->input('technologies')) tramite il metodo attach.
+        }
     
         return redirect()->route('admin.projects.index')
             ->with('success', 'Progetto creato con successo');
@@ -62,9 +68,18 @@ class ProjectController extends Controller
             'image_path' => 'required|string',
             'description' => 'required|string',
             'type_id' => 'nullable|exists:types,id', // Grantisceche type_id sia valido, se presente
+            'technologies' => 'nullable|array', // Valida che technologies sia un array
+            'technologies.*' => 'exists:technologies,id', // Valida che ciascun elemento nell'array esista come tecnologia
         ]);
     
-        $project->update($request->all());
+        $project->update($request->only(['title', 'image_path', 'description', 'type_id']));
+        // Verifico se l'utente ha selezionato delle nuove tecnologie per il progetto
+        if ($request->has('technologies')) {
+            $project->technologies()->sync($request->input('technologies')); // Se sono presenti nuove tecnologie, il metodo sync viene chiamato sulla relazione technologies del modello Project. Il metodo sync sincronizza le tecnologie associate al progetto con l'array fornito in input. Le tecnologie esistenti che non sono più presenti nell'array vengono rimosse, e le nuove tecnologie vengono aggiunte.
+        } else {
+            // Se non sono selezionate nuove tecnologie, vengono rimosse tutte le associazioni, perché l'utente non ha selezionato nuove tecnologie (la condizione è falsa), quindi ha intenzione di rimuovere tutte le tecnologie associate al progetto.
+            $project->technologies()->detach(); // Per questo viene utilizzato il metodo detach, che rimuove tutte le associazioni tra il progetto e le tecnologie, lasciando il progetto senza alcuna tecnologia associata.
+        }
     
         return redirect()->route('admin.projects.index')
             ->with('success', 'Progetto aggiornato con successo');
