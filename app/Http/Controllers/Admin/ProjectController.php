@@ -21,7 +21,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load('type'); // Carica la relazione 'type'
+        $project->load('technologies'); // Carico la relazione 'technologies'
         return view('admin.projects.show', compact('project'));
     }
 
